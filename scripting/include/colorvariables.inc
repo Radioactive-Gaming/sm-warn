@@ -17,7 +17,7 @@
 #if defined _colorvariables_included
     #endinput
 #endif
-#define _colorvariables_included "1.4.0"
+#define _colorvariables_included    "1.4.1"
 #define _CV_MAX_MESSAGE_LENGTH      1024
 #define _CV_MAX_VARIABLE_REDIRECTS  10
 #define _CV_CONFIG_DIRECTORY        "configs/colorvariables"
