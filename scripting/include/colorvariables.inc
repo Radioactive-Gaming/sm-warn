@@ -26,12 +26,6 @@ static bool g_bSkipPlayers[MAXPLAYERS + 1] = {false, ...};
 
 static Handle g_hForwardedVariable;
 
-enum triple {
-	unknown = -1,
-	yes = true,
-	no = false
-};
-static triple g_IsSource2009 = unknown;
 // ----------------------------------------------------------------------------------------
 
 forward void COnForwardedVariable(char[] sCode, char[] sData, int iDataSize, char[] sColor, int iColorSize);
@@ -500,7 +494,7 @@ stock void CSayText2(int iClient, char[] sMessage, int iAuthor, bool bChat = tru
 
 stock void CAddWhiteSpace(char[] sBuffer, int iSize)
 {
-	if (!IsSource2009()) {
+	if (!CheckGameEngine()) {
 		Format(sBuffer, iSize, " %s", sBuffer);
 	}
 }
@@ -549,7 +543,7 @@ stock bool Init()
 		{"team2",		 "{engine 11}"}
 	};
 
-	if (IsSource2009()) {
+	if (CheckGameEngine()) {
 		strcopy(sGlobalVariableList[12][1], 64, "{#cccccc}");
 		strcopy(sGlobalVariableList[13][1], 64, "{#ff4040}");
 		strcopy(sGlobalVariableList[14][1], 64, "{#4d7942}");
@@ -789,10 +783,9 @@ stock void StringToLower(char[] sSource)
 
 stock void AddColors(Handle hTrie)
 {
-	if (IsSource2009()) {
+	if (CheckGameEngine()) {
 		SetTrieString(hTrie, "default", "\x01");
 		SetTrieString(hTrie, "teamcolor", "\x03");
-
 		SetTrieString(hTrie, "aliceblue", "\x07F0F8FF");
 		SetTrieString(hTrie, "allies", "\x074D7942");
 		SetTrieString(hTrie, "ancient", "\x07EB4B4B");
@@ -969,7 +962,6 @@ stock void AddColors(Handle hTrie)
 	} else {
 		SetTrieString(hTrie, "default", "\x01");
 		SetTrieString(hTrie, "teamcolor", "\x03");
-
 		SetTrieString(hTrie, "red", "\x07");
 		SetTrieString(hTrie, "lightred", "\x0F");
 		SetTrieString(hTrie, "darkred", "\x02");
@@ -1005,14 +997,18 @@ stock void AddColors(Handle hTrie)
 	SetTrieString(hTrie, "engine 16", "\x10");
 }
 
-stock bool IsSource2009()
+stock bool CheckGameEngine()
 {
-	if (g_IsSource2009 == unknown) {
-		EngineVersion iEngineVersion = GetEngineVersion();
-		g_IsSource2009 = (iEngineVersion == Engine_CSS || iEngineVersion == Engine_TF2 || iEngineVersion == Engine_HL2DM || iEngineVersion == Engine_DODS) ? yes : no;
-	}
+    EngineVersion engine_version = GetEngineVersion();
 
-	return view_as<bool>(g_IsSource2009);
+    if (engine_version == Engine_CSS || engine_version == Engine_TF2 || engine_version == Engine_HL2DM || engine_version == Engine_DODS)
+    {
+        return true;
+	}
+	else
+    {
+        return false;
+    }
 }
 
 stock void AddPrefixAndDefaultColor(char[] sMessage, int iSize, char[] sDefaultColor = "default", char[] sPrefixColor = "prefix")
