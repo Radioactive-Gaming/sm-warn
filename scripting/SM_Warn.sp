@@ -64,7 +64,7 @@ Handle g_cVar_warnpanelurl;
 Handle g_cVar_reset_warnings;
 
 int g_target[MAXPLAYERS+1];
-int g_iWarnings[MAXPLAYERS+1] = -1; // Store info for natives
+int g_iWarnings[MAXPLAYERS+1] = {-1, ...}; // Store info for natives
 
 public Plugin myinfo =
 {
@@ -452,7 +452,7 @@ public Action Command_CheckWarnPlayer(int client, int args)
 
 /// NATIVES //////////////////////////////////////////////////////////////////
 
-public int Native_WarnPlayer(Handle plugin, int numParams)
+public void Native_WarnPlayer(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
 
@@ -468,7 +468,7 @@ public int Native_WarnPlayer(Handle plugin, int numParams)
 	ServerCommand("sm_warn #%d \"%s\"", GetClientUserId(client), Reason);
 }
 
-public int Native_UnWarnPlayer(Handle plugin, int numParams)
+public void Native_UnWarnPlayer(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
 
@@ -484,7 +484,7 @@ public int Native_UnWarnPlayer(Handle plugin, int numParams)
 	ServerCommand("sm_unwarn #%d \"%s\"", GetClientUserId(client), Reason);
 }
 
-public int Native_ResetWarnPlayer(Handle plugin, int numParams)
+public void Native_ResetWarnPlayer(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
 
@@ -992,7 +992,7 @@ public void AdminMenu_CheckWarn(Handle topmenu, TopMenuAction action, TopMenuObj
 	}
 }
 
-public int MenuHandler_Warn(Menu menu, MenuAction action, int param1, int param2)
+public void MenuHandler_Warn(Menu menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{
@@ -1030,7 +1030,7 @@ public int MenuHandler_Warn(Menu menu, MenuAction action, int param1, int param2
 	}
 }
 
-public int MenuHandler_UnWarn(Menu menu, MenuAction action, int param1, int param2)
+public void MenuHandler_UnWarn(Menu menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{
@@ -1068,7 +1068,7 @@ public int MenuHandler_UnWarn(Menu menu, MenuAction action, int param1, int para
 	}
 }
 
-public int MenuHandler_CheckWarn(Handle menu, MenuAction action, int param1, int param2)
+public void MenuHandler_CheckWarn(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{
@@ -1105,7 +1105,7 @@ public int MenuHandler_CheckWarn(Handle menu, MenuAction action, int param1, int
 	}
 }
 
-public int MenuHandler_ResetWarn(Menu menu, MenuAction action, int param1, int param2)
+public void MenuHandler_ResetWarn(Menu menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{
@@ -1143,7 +1143,7 @@ public int MenuHandler_ResetWarn(Menu menu, MenuAction action, int param1, int p
 	}
 }
 
-public int MenuHandler_PreformWarn(Menu menu, MenuAction action, int param1, int param2)
+public void MenuHandler_PreformWarn(Menu menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{
@@ -1166,7 +1166,7 @@ public int MenuHandler_PreformWarn(Menu menu, MenuAction action, int param1, int
 	}
 }
 
-public int MenuHandler_PreformUnWarn(Menu menu, MenuAction action, int param1, int param2)
+public void MenuHandler_PreformUnWarn(Menu menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{
@@ -1189,7 +1189,7 @@ public int MenuHandler_PreformUnWarn(Menu menu, MenuAction action, int param1, i
 	}
 }
 
-public int MenuHandler_PreformResetWarn(Menu menu, MenuAction action, int param1, int param2)
+public void MenuHandler_PreformResetWarn(Menu menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{
@@ -1212,7 +1212,7 @@ public int MenuHandler_PreformResetWarn(Menu menu, MenuAction action, int param1
 	}
 }
 
-public int MenuHandler_WarnAgreement(Menu menu, MenuAction action, int param1, int param2)
+public void MenuHandler_WarnAgreement(Menu menu, MenuAction action, int param1, int param2)
 {
 	if(action == MenuAction_Select)
 	{
