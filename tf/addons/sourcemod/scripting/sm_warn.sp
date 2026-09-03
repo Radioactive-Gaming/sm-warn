@@ -31,6 +31,7 @@
 #define REQUIRE_EXTENSIONS
 #define REQUIRE_PLUGIN
 #define PLUGIN_VERSION "1.3.2"
+#define PREFIX "\x04[SourceWarn]\x01 "
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -44,7 +45,6 @@ char pathwarn[PLATFORM_MAX_PATH];
 char pathunwarn[PLATFORM_MAX_PATH];
 char pathresetwarn[PLATFORM_MAX_PATH];
 char pathagree[PLATFORM_MAX_PATH];
-char MSG[64];
 
 Handle hDatabase;
 Handle DHhostname;
@@ -153,9 +153,9 @@ public void OnPluginStart()
 	Handle topmenu;
 
 	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != INVALID_HANDLE))
-		OnAdminMenuReady(topmenu);
-
-	Format(MSG, sizeof(MSG), "%t", "Chat Prefix");
+    {
+        OnAdminMenuReady(topmenu);
+    }
 }
 
 public void OnAllPluginsLoaded()
@@ -223,7 +223,7 @@ public Action Command_WarnPlayer(int client, int args)
 {
 	if (args < 2)
 	{
-		ReplyToCommand(client, "%s%t", MSG, "warn_arguments");
+		ReplyToCommand(client, "%s%t", PREFIX, "warn_arguments");
 		return Plugin_Handled;
 	}
 
@@ -272,7 +272,7 @@ public Action Command_WarnPlayer(int client, int args)
 
 		SQL_TQuery(hDatabase, SQL_WarnPlayer, dbQuery, datapack);
 
-		CShowActivity2(client, MSG, "%t", "warn_warnplayer", target, reason);
+		CShowActivity2(client, PREFIX, "%t", "warn_warnplayer", target, reason);
 
 		if(GetConVarBool(g_cVar_LogWarnings))
 		{
@@ -303,7 +303,7 @@ public Action Command_UnWarnPlayer(int client, int args)
 {
 	if (args < 2)
 	{
-		ReplyToCommand(client, "%s%t", MSG, "warn_arguments2");
+		ReplyToCommand(client, "%s%t", PREFIX, "warn_arguments2");
 		return Plugin_Handled;
 	}
 
@@ -355,13 +355,13 @@ public Action Command_WarnReset(int client, int args)
 {
 	if(!GetConVarBool(g_cVar_reset_warnings))
 	{
-		ReplyToCommand(client, "%sCommand has been disabled", MSG);
+		ReplyToCommand(client, "%sCommand has been disabled", PREFIX);
 		return Plugin_Handled;
 	}
 
 	if (args < 2)
 	{
-		ReplyToCommand(client, "%s%t", "warn_arguments4", MSG);
+		ReplyToCommand(client, "%s%t", "warn_arguments4", PREFIX);
 		return Plugin_Handled;
 	}
 
@@ -418,7 +418,7 @@ public Action Command_CheckWarnPlayer(int client, int args)
 
 	if (args < 1)
 	{
-		ReplyToCommand(client, "%s%t", "warn_arguments3", MSG);
+		ReplyToCommand(client, "%s%t", "warn_arguments3", PREFIX);
 		return Plugin_Handled;
 	}
 
@@ -561,7 +561,7 @@ public void SQL_CheckWarnings(Handle owner, Handle hndl, const char[] error, any
 		g_iWarnings[client] = SQL_GetRowCount(hndl);
 
 		if (GetConVarBool(g_cVar_PrintToAdmins))
-			PrintToAdmins("%s%t", MSG, "warn_warnconnect", client, g_iWarnings[client]);
+			PrintToAdmins("%s%t", PREFIX, "warn_warnconnect", client, g_iWarnings[client]);
 	}
 }
 
@@ -680,23 +680,23 @@ public void SQL_WarnPlayer(Handle owner, Handle hndl, const char[] error, any da
 			case 1:
 			{
 				// Aww, i want to punish them, aaarr
-				CPrintToChat(target, "%s%t", MSG, "warn_message");
+				CPrintToChat(target, "%s%t", PREFIX, "warn_message");
 			}
 			case 2:
 			{
 				SlapPlayer(target, GetConVarInt(g_cVar_slapdamage), true);
-				CPrintToChat(target, "%s%t", MSG, "warn_message");
+				CPrintToChat(target, "%s%t", PREFIX, "warn_message");
 			}
 			case 3:
 			{
 				ForcePlayerSuicide(target);
-				CPrintToChat(target, "%s%t", MSG, "warn_message");
+				CPrintToChat(target, "%s%t", PREFIX, "warn_message");
 			}
 			case 4:
 			{
 				SetEntityMoveType(target, MOVETYPE_NONE);
 				BuildAgreement(target);
-				CPrintToChat(target, "%s%t", MSG, "warn_message");
+				CPrintToChat(target, "%s%t", PREFIX, "warn_message");
 			}
 			case 5:
 			{
@@ -769,7 +769,7 @@ public void SQL_UnWarnPlayer(Handle owner, Handle hndl, const char[] error, any 
 
 		SQL_TQuery(hDatabase, SQL_EmptyCallback, dbQuery);
 
-		CShowActivity2(client, MSG, "%t", "warn_unwarn_player", target, reason);
+		CShowActivity2(client, PREFIX, "%t", "warn_unwarn_player", target, reason);
 
 		if(GetConVarBool(g_cVar_LogWarnings))
 		{
@@ -778,7 +778,7 @@ public void SQL_UnWarnPlayer(Handle owner, Handle hndl, const char[] error, any 
 	}
 	else
 	{
-		CPrintToChat(client, "%s%t", MSG, "warn_notwarned", target);
+		CPrintToChat(client, "%s%t", PREFIX, "warn_notwarned", target);
 	}
 }
 
@@ -809,7 +809,7 @@ public void SQL_ResetWarnPlayer(Handle owner, Handle hndl, const char[] error, a
 		Format(dbQuery, sizeof(dbQuery), "DELETE FROM smwarn WHERE tsteamid = '%s'", tsteamid);
 		SQL_TQuery(hDatabase, SQL_EmptyCallback, dbQuery);
 
-		CShowActivity2(client, MSG, "%t", "warn_resetplayer", target, reason);
+		CShowActivity2(client, PREFIX, "%t", "warn_resetplayer", target, reason);
 
 		char csteamid[32], cip[32], tip[32];
 
@@ -832,7 +832,7 @@ public void SQL_ResetWarnPlayer(Handle owner, Handle hndl, const char[] error, a
 	}
 	else
 	{
-		CPrintToChat(client, "%s%t", MSG, "warn_notwarned", target);
+		CPrintToChat(client, "%s%t", PREFIX, "warn_notwarned", target);
 	}
 }
 
@@ -855,11 +855,11 @@ public void SQL_CheckPlayer(Handle owner, Handle hndl, const char[] error, any d
 
 	if (SQL_GetRowCount(hndl) == 0)
 	{
-		CPrintToChat(client, "%s%t", MSG, "warn_notwarned", target);
+		CPrintToChat(client, "%s%t", PREFIX, "warn_notwarned", target);
 		return;
 	}
 
-	CPrintToChat(client, "%sCheck console for output", MSG);
+	CPrintToChat(client, "%sCheck console for output", PREFIX);
 
 	int warnings = SQL_GetRowCount(hndl);
 	char nickname[15], admin[15], Reason[32], Date[32], Expired[4], hostname[254];
@@ -1016,11 +1016,11 @@ public void MenuHandler_Warn(Menu menu, MenuAction action, int param1, int param
 
 		if ((target = GetClientOfUserId(userid)) == 0)
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_notavailable");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_notavailable");
 		}
 		else if (!CanUserTarget(param1, target))
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_canttarget");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_canttarget");
 		}
 		else
 		{
@@ -1054,11 +1054,11 @@ public void MenuHandler_UnWarn(Menu menu, MenuAction action, int param1, int par
 
 		if ((target = GetClientOfUserId(userid)) == 0)
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_notavailable");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_notavailable");
 		}
 		else if (!CanUserTarget(param1, target))
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_canttarget");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_canttarget");
 		}
 		else
 		{
@@ -1092,11 +1092,11 @@ public void MenuHandler_CheckWarn(Handle menu, MenuAction action, int param1, in
 
 		if ((target = GetClientOfUserId(userid)) == 0)
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_notavailable");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_notavailable");
 		}
 		else if (!CanUserTarget(param1, target))
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_canttarget");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_canttarget");
 		}
 		else
 		{
@@ -1129,11 +1129,11 @@ public void MenuHandler_ResetWarn(Menu menu, MenuAction action, int param1, int 
 
 		if ((target = GetClientOfUserId(userid)) == 0)
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_notavailable");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_notavailable");
 		}
 		else if (!CanUserTarget(param1, target))
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_canttarget");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_canttarget");
 		}
 		else
 		{
@@ -1218,7 +1218,7 @@ public void MenuHandler_WarnAgreement(Menu menu, MenuAction action, int param1, 
 	{
 		if(param2 == 1)
 		{
-			CPrintToChat(param1, "%s%t", MSG, "warn_agreement_message");
+			CPrintToChat(param1, "%s%t", PREFIX, "warn_agreement_message");
 			SetEntityMoveType(param1, MOVETYPE_WALK);
 		}
 	}
