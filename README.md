@@ -5,6 +5,7 @@
 
 ## Requirements ##
 - Sourcemod and Metamod 1.12.
+- [SourceBans++ 2.0](https://github.com/sbpp/sourcebans-pp)
 - [Color Variables](https://github.com/Radioactive-Gaming/sm-color-variables).
 
 
