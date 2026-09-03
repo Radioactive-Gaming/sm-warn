@@ -129,7 +129,7 @@ public void OnPluginStart()
 	g_cVar_PrintToAdmins = CreateConVar("sm_warn_printtoadmins", "1", "Print previous warnings on connect to admins: 0 - disabled, 1 - enabled", _, true, 0.0, true, 1.0);
 	g_cVar_LogWarnings = CreateConVar("sm_warn_logwarnings", "1", "Log the admin commands: 0 - disabled, 1 - enabled", _, true, 0.0, true, 1.0);
 
-	AutoExecConfig(true, "plugin.sm_warn.cfg");
+	AutoExecConfig(true, "plugin.sm_warn");
 
 	// Commands
 	RegAdminCmd("sm_warn", Command_WarnPlayer, ADMFLAG_BAN);
@@ -153,6 +153,7 @@ public void OnPluginStart()
 	Handle topmenu;
 
 	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != INVALID_HANDLE))
+        
 		OnAdminMenuReady(topmenu);
 
 	Format(MSG, sizeof(MSG), "%t", "Chat Prefix");
@@ -519,32 +520,16 @@ public void SetupDatabase()
 
 public void SQL_OnConnect(Handle owner, Handle hndl, const char[] error, any data)
 {
-	if (hndl == INVALID_HANDLE)
-		SetFailState("[SM warn] Database failure: %s", error);
+	/* Fail the plugin if the database connection fails. */
+    if (hndl == INVALID_HANDLE)
+    {
+        LogError("Failed to connect to the database: %s", error);
+        SetFailState("Failed to connect to the database: %s", error);
+    }
 	else
 	{
-		hDatabase = hndl;
-
-		char buffer[1024];
-
-		SQL_GetDriverIdent(SQL_ReadDriver(hDatabase), buffer, sizeof(buffer));
-
-		int UseMySQL = StrEqual(buffer, "mysql", false) ? 1 : 0;
-
-		if (UseMySQL == 1)
-			Format(buffer, sizeof(buffer), "CREATE TABLE IF NOT EXISTS `smwarn` (`target` VARCHAR(64), `tsteamid` VARCHAR(32), `admin` VARCHAR(64), `asteamid` VARCHAR(32), `reason` VARCHAR(64), `time` VARCHAR(64), `expired` VARCHAR(1), `hostname` VARCHAR(254)) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci");
-		else
-			Format(buffer, sizeof(buffer), "CREATE TABLE IF NOT EXISTS smwarn (target TEXT, tsteamid TEXT, admin TEXT, asteamid TEXT, reason TEXT, time TEXT, expired TEXT, hostname TEXT);");
-
-		SQL_TQuery(hDatabase, SQL_EmptyCallback, buffer);
-
-		if (UseMySQL == 1)
-		{
-			char dbQuery[254];
-			Format(dbQuery, sizeof(dbQuery), "ALTER TABLE `smwarn` CONVERT TO CHARACTER SET 'utf8mb4'");
-
-			SQL_TQuery(hDatabase, SQL_EmptyCallback, dbQuery);
-		}
+		/* Set the database connection to the global handle. */
+        hDatabase = hndl;
 	}
 }
 
@@ -552,8 +537,8 @@ public void SQL_CheckWarnings(Handle owner, Handle hndl, const char[] error, any
 {
 	if (hndl == INVALID_HANDLE)
 	{
-		SetupDatabase();
-		return;
+        LogError("Failed to connect to the database.");
+        SetFailState("Failed to connect to the database.");
 	}
 
 	if (SQL_FetchRow(hndl))
@@ -593,8 +578,8 @@ public void SQL_WarnPlayer(Handle owner, Handle hndl, const char[] error, any da
 
 	if (hndl == INVALID_HANDLE)
 	{
-		SetupDatabase();
-		return;
+        LogError("Failed to connect to the database.");
+        SetFailState("Failed to connect to the database.");
 	}
 
 	if (client != 0)
@@ -741,8 +726,8 @@ public void SQL_UnWarnPlayer(Handle owner, Handle hndl, const char[] error, any 
 
 	if (hndl == INVALID_HANDLE)
 	{
-		SetupDatabase();
-		return;
+        LogError("Failed to connect to the database.");
+        SetFailState("Failed to connect to the database.");
 	}
 
 	char dbQuery[500];
@@ -798,8 +783,8 @@ public void SQL_ResetWarnPlayer(Handle owner, Handle hndl, const char[] error, a
 
 	if (hndl == INVALID_HANDLE)
 	{
-		SetupDatabase();
-		return;
+        LogError("Failed to connect to the database.");
+        SetFailState("Failed to connect to the database.");
 	}
 
 	char dbQuery[254];
@@ -849,8 +834,8 @@ public void SQL_CheckPlayer(Handle owner, Handle hndl, const char[] error, any d
 
 	if (hndl == INVALID_HANDLE)
 	{
-		SetupDatabase();
-		return;
+        LogError("Failed to connect to the database.");
+        SetFailState("Failed to connect to the database.");
 	}
 
 	if (SQL_GetRowCount(hndl) == 0)
