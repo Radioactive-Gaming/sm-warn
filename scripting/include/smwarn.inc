@@ -1,3 +1,6 @@
+#pragma semicolon 1
+#pragma newdecls required
+
 #if defined _smwarn_included
   #endinput
 #endif
@@ -10,7 +13,7 @@
  * @param reason		The reason why you issue a warning on client
  * @noreturn		
  *********************************************************/
-native smwarn_warn(client, String:reason[]);
+native smwarn_warn(int client, char reason[]);
 
 /*********************************************************
  * Remove a warning on a player
@@ -19,7 +22,7 @@ native smwarn_warn(client, String:reason[]);
  * @param reason		The reason why you remove the warning
  * @noreturn		
  *********************************************************/
-native smwarn_unwarn(client, String:reason[]);
+native smwarn_unwarn(int client, char reason[]);
 
 /*********************************************************
  * Reset a players warnings
@@ -28,7 +31,7 @@ native smwarn_unwarn(client, String:reason[]);
  * @param reason		The reason why you reset the warnings
  * @noreturn		
  *********************************************************/
-native smwarn_resetwarn(client, String:reason[]);
+native smwarn_resetwarn(int client, char reason[]);
 
 /*********************************************************
  * Get number of active warnings
@@ -36,4 +39,4 @@ native smwarn_resetwarn(client, String:reason[]);
  * @param client		The client to reset the warnings on
  * @return false if user isn't initialized or has no warnings, else returns number of active warnings		
  *********************************************************/
-native smwarn_getwarns(client);
+native smwarn_getwarns(int client);
